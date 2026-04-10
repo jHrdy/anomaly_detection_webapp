@@ -1,4 +1,4 @@
-# Detector Signal Anomaly GUI
+# Anomaly Detection Webapp
 
 A lightweight web interface for testing anomaly detection models on 96-bin physical detector data. 
 
@@ -17,8 +17,8 @@ You'll need Python 3.x. I recommend using a virtual environment.
 
 ```bash
 # Clone the repo
-git clone [https://github.com/YourUsername/your-repo-name.git](https://github.com/YourUsername/your-repo-name.git)
-cd your-repo-name
+git clone https://github.com/jHrdy/anomaly_detection_webapp.git
+cd anomaly_detection_webapp
 
 # Install the required packages
 pip install flask numpy torch matplotlib
