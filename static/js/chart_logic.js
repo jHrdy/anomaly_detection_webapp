@@ -75,7 +75,7 @@ async function evaluateModel() {
 
         // 3. Zobrazenie heatmapy (ak existuje)
         if (result.heatmap) {
-            heatmapContainer.innerHTML = `<h3>Detailná analýza rezíduí:</h3><img src="${result.heatmap}" style="max-width:100%; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">`;
+            heatmapContainer.innerHTML = `<h3>Detailed residual analysis:</h3><img src="${result.heatmap}" style="max-width:100%; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">`;
             heatmapContainer.style.display = 'block';
         } else {
             heatmapContainer.style.display = 'none';
