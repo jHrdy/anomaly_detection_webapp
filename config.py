@@ -1,0 +1,1 @@
+MODEL_PATH = 'model/ae_conv_v3.1_Wass_Reg_ep246.pth'

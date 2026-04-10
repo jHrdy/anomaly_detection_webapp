@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anomaly Detection - Detector Simulation</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-dragdata@2.2.3/dist/chartjs-plugin-dragdata.min.js"></script>
+    
+    <style>
+        /* Modern Color Palette */
+        :root {
+            --bg-color: #0b0f19;       /* Deep high-tech dark */
+            --surface: #111827;        /* Card background */
+            --surface-raised: #1f2937; /* Controls background */
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --accent: #3b82f6;         /* Tech blue */
+            --accent-hover: #60a5fa;
+            --border: #374151;
+        }
+
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--bg-color); 
+            color: var(--text-primary); 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 40px 20px; 
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .container { 
+            background-color: var(--surface); 
+            padding: 40px; 
+            border-radius: 12px; 
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5); 
+            width: 100%; 
+            max-width: 1000px; 
+        }
+
+        h2 {
+            text-align: center; 
+            margin-top: 0;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            font-size: 1.8rem;
+        }
+
+        p.subtitle {
+            text-align: center; 
+            color: var(--text-secondary); 
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+
+        .chart-wrapper { 
+            height: 400px; 
+            margin-bottom: 30px; 
+            background: #00000020;
+            border-radius: 8px;
+            padding: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .controls { 
+            display: flex; 
+            flex-wrap: wrap;
+            justify-content: center; 
+            align-items: center;
+            gap: 24px; 
+            padding: 20px;
+            background-color: var(--surface-raised);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .quantile-control {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        /* Styling the range slider for a modern look */
+        input[type=range] {
+            accent-color: var(--accent);
+            cursor: pointer;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            outline: none;
+        }
+
+        output {
+            background: var(--bg-color);
+            padding: 4px 12px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            min-width: 35px;
+            text-align: center;
+            font-family: 'Courier New', Courier, monospace;
+            color: var(--text-primary);
+        }
+
+        button { 
+            padding: 10px 24px; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            font-size: 0.85rem;
+            transition: all 0.2s ease; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-evaluate { 
+            background-color: var(--accent); 
+            color: #ffffff; 
+        }
+
+        .btn-evaluate:hover { 
+            background-color: var(--accent-hover); 
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-reset { 
+            background-color: transparent; 
+            color: var(--text-primary); 
+            border: 1px solid var(--text-secondary);
+        }
+
+        .btn-reset:hover { 
+            background-color: var(--border); 
+            color: #ffffff;
+        }
+
+        #result { 
+            margin-top: 25px;
+            width: 100%; 
+            padding: 20px; 
+            border-radius: 8px; 
+            text-align: center; 
+            color: white; 
+            font-size: 1.1em; 
+            display: none; 
+            box-sizing: border-box;
+            letter-spacing: 0.5px;
+        }
+
+        #heatmap-container {
+            margin-top: 25px; 
+            width: 100%; 
+            text-align: center; 
+            display: none;
+            background-color: var(--surface);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-sizing: border-box;
+        }
+        
+        #heatmap-container img {
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Detector Anomaly Simulator</h2>
+        <p class="subtitle">
+            Draw the signal trace with your mouse and click <strong>Evaluate</strong> for quantile analysis.
+        </p>
+
+        <div class="chart-wrapper">
+            <canvas id="mainChart"></canvas>
+        </div>
+
+        <div class="controls">
+            <div class="quantile-control">
+                <label for="qRange">Quantile (q):</label>
+                <input type="range" id="qRange" min="0.5" max="0.99" step="0.01" value="0.9" 
+                       oninput="this.nextElementSibling.value = this.value">
+                <output>0.9</output>
+            </div>
+
+            <button class="btn-evaluate" onclick="evaluateModel()">Evaluate</button>
+            <button class="btn-reset" onclick="resetData()">Reset</button>
+        </div>
+
+        <div id="result"></div>
+    </div>
+    
+    <div id="heatmap-container"></div>
+
+    <script>
+        Chart.defaults.color = '#9ca3af'; // Sets axis and label colors to a readable gray
+        Chart.defaults.borderColor = '#374151'; // Sets grid line colors
+    </script>
+    
+    <script src="{{ url_for('static', filename='js/chart_logic.js') }}"></script>
+</body>
+</html>
