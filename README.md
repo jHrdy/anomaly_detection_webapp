@@ -21,7 +21,7 @@ I built this because testing edge cases via CLI or Jupyter notebooks gets tediou
 
 ## Quickstart
 
-You'll need Python 3.x. I recommend using a virtual environment.
+You'll need Python 3.x. I recommend using a virtual environment. Application will start on 127.0.0.1:5000 if the port is free.
 
 ```bash
 # Clone the repo
