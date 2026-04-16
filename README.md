@@ -13,7 +13,7 @@ I built this because testing edge cases via CLI or Jupyter notebooks gets tediou
 
 ## For Your model testing
 
-1. **Architecture**: Insert yours architecture obsejct into model_loader.py
+1. **Architecture**: Insert your architecture obsejct into model_loader.py
 2. **Weights**: Either have your weights in a .pth file under key "model_state_dict" or rewrite function load_model in the model_loader.py file
 3. **Model folder**: Input your model weights to model/ folder
 4. **Change config**: In the config.py file change variable MODEL_PATH so it points to your weights 
